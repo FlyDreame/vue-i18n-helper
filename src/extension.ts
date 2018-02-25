@@ -1,27 +1,65 @@
 'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import { workspace, languages, window, commands, ExtensionContext, Disposable, Uri } from 'vscode'
+import * as path from 'path'
+import * as fse from 'fs-extra'
+import * as fs from 'fs'
+import I18nDiffViewProvider from './i18nDiffViewProvider'
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: ExtensionContext) {
+  const rootPath = workspace.rootPath											// 项目根路径
+  const config = workspace.getConfiguration('viHelper')		// 获取配置信息
+  const i18nFilePath = config.i18nFilePath								// 资源文件路径
+  const language = config.language												// 翻译语言
 
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "vue-i18n-helper" is now active!');
+	// 提供vue文件的翻译内容
+	const i18nDiffViewProvider = new I18nDiffViewProvider(path.join(rootPath, i18nFilePath))
+	const providerRegistrations = Disposable.from(
+		workspace.registerTextDocumentContentProvider(I18nDiffViewProvider.scheme, i18nDiffViewProvider)
+	)
 
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
-        // The code you place here will be executed every time your command is executed
+	// 显示翻译内容diff命令
+	const disposable = commands.registerCommand('viHelper.showi18nPanel', async () => {
+		const document = window.activeTextEditor.document
+    const activeUri = document.uri
+    const sourceText = document.getText()
+		const filePath = activeUri.fsPath.toString()
 
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!');
-    });
+		try {
+			// i18n模块路径
+			const i18nPath = path.join(rootPath, '/node_modules/vue-i18n/dist/vue-i18n.common.js')
+			// vue-i18n的翻译文件路径
+			const i18nLangPath = path.join(rootPath, i18nFilePath)
+			// 检测翻译文件路径是否存在
+			await fse.ensureFile(i18nLangPath)
+			// 打开diff
+			commands.executeCommand(
+				'vscode.diff', 
+				activeUri, 
+				activeUri.with({
+					scheme: I18nDiffViewProvider.scheme,
+					path: activeUri.path,
+					query: JSON.stringify({
+						path: activeUri.fsPath
+					})
+				}),
+				'vue-i18n-helper', 
+				{
+					preview: true
+				}
+			)
 
-    context.subscriptions.push(disposable);
+		} catch (error) {
+			window.showErrorMessage('未找到翻译文件：' + path.join(rootPath, i18nFilePath))
+		}
+	})
+
+	// 注册命令
+	context.subscriptions.push(
+		disposable,
+		providerRegistrations
+	)
 }
 
 // this method is called when your extension is deactivated

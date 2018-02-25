@@ -1,24 +1,62 @@
 {
     "name": "vue-i18n-helper",
-    "displayName": "vue i18n helper",
+    "displayName": "Vue I18n Helper",
     "description": "",
     "version": "0.0.1",
     "publisher": "FlyDreame",
     "engines": {
         "vscode": "^1.17.0"
     },
+    "bugs": {
+        "url": "https://github.com/FlyDreame/vue-i18n-helper/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/FlyDreame/vue-i18n-helper"
+    },
     "categories": [
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:viHelper.showi18nPanel"
     ],
     "main": "./out/extension",
     "contributes": {
-        "commands": [{
-            "command": "extension.sayHello",
-            "title": "Hello World"
-        }]
+        "commands": [
+            {
+                "command": "viHelper.showi18nPanel",
+                "title": "show vue-i18n translate panel",
+                "icon": {
+                    "light": "./svg/vuejs.svg",
+                    "dark": "./svg/vuejs.svg"
+                }
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "when": "resourceLangId == vue",
+                    "command": "viHelper.showi18nPanel",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "configuration": {
+            "type": "object",
+            "title": "vue-i18n-helper Configuration",
+            "properties": {
+                "viHelper.i18nFilePath": {
+                    "type": "string",
+                    "default": "./static/i18n/zh_CN/index.json",
+                    "description": "vue-i18n的翻译文件路径"
+                },
+                "viHelper.language": {
+                    "type": "string",
+                    "default": "zh_CN",
+                    "description": "翻译的语言"
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -32,5 +70,9 @@
         "vscode": "^1.1.6",
         "@types/node": "^7.0.43",
         "@types/mocha": "^2.2.42"
+    },
+    "dependencies": {
+        "fs-extra": "^5.0.0",
+        "tmp": "0.0.33"
     }
 }
