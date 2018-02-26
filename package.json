@@ -1,12 +1,13 @@
 {
     "name": "vue-i18n-helper",
     "displayName": "Vue I18n Helper",
-    "description": "",
+    "description": "vue-i18n的辅助小插件",
     "version": "0.0.1",
     "publisher": "FlyDreame",
     "engines": {
         "vscode": "^1.17.0"
     },
+    "icon": "images/icon.png",
     "bugs": {
         "url": "https://github.com/FlyDreame/vue-i18n-helper/issues"
     },
@@ -17,6 +18,12 @@
     "categories": [
         "Other"
     ],
+    "keywords": [
+        "vue-i18n-helper",
+        "vue-i18n",
+        "vue",
+        "i18n"
+    ],
     "activationEvents": [
         "onCommand:viHelper.showi18nPanel"
     ],
@@ -25,10 +32,10 @@
         "commands": [
             {
                 "command": "viHelper.showi18nPanel",
-                "title": "show vue-i18n translate panel",
+                "title": "显示 vue-i18n 的翻译对比",
                 "icon": {
-                    "light": "./svg/vuejs.svg",
-                    "dark": "./svg/vuejs.svg"
+                    "light": "./svg/vue-i18n.svg",
+                    "dark": "./svg/vue-i18n.svg"
                 }
             }
         ],

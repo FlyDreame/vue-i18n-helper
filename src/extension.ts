@@ -26,33 +26,39 @@ export function activate(context: ExtensionContext) {
     const sourceText = document.getText()
 		const filePath = activeUri.fsPath.toString()
 
-		try {
-			// i18n模块路径
-			const i18nPath = path.join(rootPath, '/node_modules/vue-i18n/dist/vue-i18n.common.js')
-			// vue-i18n的翻译文件路径
-			const i18nLangPath = path.join(rootPath, i18nFilePath)
-			// 检测翻译文件路径是否存在
-			await fse.ensureFile(i18nLangPath)
-			// 打开diff
-			commands.executeCommand(
-				'vscode.diff', 
-				activeUri, 
-				activeUri.with({
-					scheme: I18nDiffViewProvider.scheme,
-					path: activeUri.path,
-					query: JSON.stringify({
-						path: activeUri.fsPath
-					})
-				}),
-				'vue-i18n-helper', 
-				{
-					preview: true
-				}
-			)
 
-		} catch (error) {
-			window.showErrorMessage('未找到翻译文件：' + path.join(rootPath, i18nFilePath))
+		if (activeUri.scheme !== I18nDiffViewProvider.scheme) {
+			try {
+				// i18n模块路径
+				const i18nPath = path.join(rootPath, '/node_modules/vue-i18n/dist/vue-i18n.common.js')
+				// vue-i18n的翻译文件路径
+				const i18nLangPath = path.join(rootPath, i18nFilePath)
+				// 检测翻译文件路径是否存在
+				await fse.ensureFile(i18nLangPath)
+				// 打开diff
+				commands.executeCommand(
+					'vscode.diff', 
+					activeUri, 
+					activeUri.with({
+						scheme: I18nDiffViewProvider.scheme,
+						path: activeUri.path,
+						query: JSON.stringify({
+							path: activeUri.fsPath
+						})
+					}),
+					'vue-i18n-helper', 
+					{
+						preview: true
+					}
+				)
+	
+			} catch (error) {
+				window.showErrorMessage('未找到翻译文件：' + path.join(rootPath, i18nFilePath))
+			}
+		} else {
+			commands.executeCommand('workbench.action.closeActiveEditor')
 		}
+		
 	})
 
 	// 注册命令
