@@ -2,7 +2,7 @@
     "name": "vue-i18n-helper",
     "displayName": "Vue I18n Helper",
     "description": "vue-i18n的辅助小插件",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "FlyDreame",
     "engines": {
         "vscode": "^1.17.0"
