@@ -1,24 +1,23 @@
 'use strict'
 
-import { TextDocumentContentProvider, Uri, workspace } from 'vscode'
+import { TextDocumentContentProvider, Uri, workspace, ExtensionContext } from 'vscode'
 import * as fs from 'fs'
 import {transText} from './translate'
 import * as fse from 'fs-extra'
 
 export default class i18nDiffViewProvider implements TextDocumentContentProvider {
   static scheme = 'i18nDiff'
-  private i18nLangPath = ''
+  private context:ExtensionContext
 
-  constructor(i18nLangPath) {
-    this.i18nLangPath = i18nLangPath
+  constructor(context) {
+    this.context = context
   }
 
   provideTextDocumentContent(uri: Uri): string {
     try {
       const filePath = uri.fsPath
-      const langData = fse.readJsonSync(this.i18nLangPath)
       const sourceText = fs.readFileSync(filePath, "utf-8")
-      return transText(langData, sourceText)
+      return transText(this.context.globalState.get('langObj'), sourceText)
     } catch (error) {
       console.error(error)
       return '翻译对比出现错误'

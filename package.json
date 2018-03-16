@@ -25,6 +25,8 @@
         "i18n"
     ],
     "activationEvents": [
+        "onLanguage:vue",
+        "onLanguage:vue-html",
         "onCommand:viHelper.showi18nPanel"
     ],
     "main": "./out/extension",
